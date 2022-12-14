@@ -15,7 +15,7 @@ class AddScreenViewModelImp : AddScreenViewModel, ViewModel() {
     override val successBackLiveData: MutableLiveData<Unit> = MutableLiveData()
     override val errorLiveData: MutableLiveData<String> = MutableLiveData()
     override val progressStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    private val bookScreenUseCase = BookScreenUseCaseImp(BookRepositoryImpl(),this)
+    private val bookScreenUseCase = BookRepositoryImpl()
 
 
     override fun addBook(bookRequest: AddBookRequest) {
@@ -24,9 +24,10 @@ class AddScreenViewModelImp : AddScreenViewModel, ViewModel() {
         if (checker(bookRequest)) {
             progressStatusLiveData.value = false
             viewModelScope.launch(Dispatchers.IO) {
-                bookScreenUseCase.addBook(bookRequest).let {
+                bookScreenUseCase.addBook(AppReference.getInstance().getToken()!!, bookRequest)
+                    .let {
 
-                }
+                    }
                 successBackLiveData.postValue(Unit)
             }
         } else {
